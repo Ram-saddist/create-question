@@ -17,6 +17,7 @@ const BatchForm = () => {
     Date: '',
     Duration: '',
     Status: '',
+    Mentor:''
   });
 
   const location = localStorage.getItem('location') || 'Vijayawada'; // Default to Vijayawada
@@ -37,7 +38,8 @@ const BatchForm = () => {
       Date: formData.Date,
       Duration: formData.Duration,
       Status: formData.Status,
-      location
+      location,
+      Mentor:formData.Mentor
     };
 
     try {
@@ -55,6 +57,7 @@ const BatchForm = () => {
         Date: '',
         Duration: '',
         Status: '',
+        Mentor:''
       });
     } catch (err) {
       Swal.fire({
@@ -178,6 +181,21 @@ const BatchForm = () => {
                 <option value="Completed">Completed</option>
                 <option value="Upcoming">Upcoming</option>
               </select>
+            </div>
+            <div>
+              <label htmlFor="Mentor" className="block text-sm font-medium text-gray-700">
+                <FaIdCard className="inline mr-2 text-blue-500" />
+                Mentor Name
+              </label>
+              <input
+                type="text"
+                name="Mentor"
+                id="Mentor"
+                value={formData.Mentor}
+                onChange={handleInputChange}
+                placeholder="Enter Mentor Name (e.g., Saketh)"
+                className="mt-1 block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
           </div>
 

@@ -308,11 +308,9 @@ const CurriculumManagement = () => {
   const handleSubmitExcel = async () => {
      console.log(excelData)
     try {
-
-
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/syllabus`, excelData);
-    console.log(response)
       if (response.status === 200) {
+        console.log(response)
         Swal.fire({
           icon: "success",
           title: "File Uploaded Successfully",

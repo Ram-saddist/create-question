@@ -1,5 +1,5 @@
 import React from "react";
-
+import axios from 'axios'
 const subjects = [
   "Python",
   "MySQL",
@@ -12,6 +12,7 @@ const subjects = [
 ];
 
 const SubjectDropdown = ({ setSelectedSubject }) => {
+  const location=localStorage.getItem("location")
   return (
     <div className="flex flex-col items-center bg-black space-y-4 md:space-y-6 px-6 py-6  rounded-lg shadow-lg max-w-md mx-auto">
       <label className="text-lg font-semibold text-white md:text-xl">

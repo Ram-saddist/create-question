@@ -5,7 +5,7 @@ const CreateExam = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [codingQuestions, setCodingQuestions] = useState([]);
     const [mcqQuestions, setMcqQuestions] = useState([]);
-
+    const [day,setDay]=useState('')
     const handleOptionClick = (option) => {
         setSelectedOption(option);
     };
@@ -62,30 +62,95 @@ const CreateExam = () => {
         updatedQuestions.splice(index, 1);
         setMcqQuestions(updatedQuestions);
     };
+  
     const handleFileUpload = (e, type) => {
         const file = e.target.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onload = (event) => {
             const data = event.target.result;
-            // Parse the Excel file using a library like SheetJS (xlsx)
             const workbook = XLSX.read(data, { type: "binary" });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
-            const json = XLSX.utils.sheet_to_json(sheet);
+            const rawJson = XLSX.utils.sheet_to_json(sheet);
+      
+            // Transform the raw JSON into the desired format
+            const transformedData = rawJson.map((row) => {
+              if (type === "coding") {
+                // Coding Questions Mapping
+                return {
+                  questionId: row["Question ID"] || "",
+                  questionType: row["Question Type"] || "Coding",
+                  language: row["Language"] || "",
+                  questionDescription: row["Question Description"] || "",
+                  sampleInput: row["Sample Input"] || "",
+                  sampleOutput: row["Sample Output"] || "",
+                  constraints: row["Constrains"] || "",
+                  testCases: [
+                    {
+                      input: row["Test case 1 I/0"] || "",
+                      output: row["Test case 1 Output"] || "",
+                      isHidden: false,
+                    },
+                    {
+                      input: row["Test case 2 I/0"] || "",
+                      output: row["Test case 2 Output"] || "",
+                      isHidden: true,
+                    },
+                  ],
+                  score: row["Score"] || "",
+                  tags: row["Tags"] || "",
+                  difficulty: row["Difficulty"] || "",
+                  explanation: row["Explanation"] || "",
+                  explanationUrls: [
+                    row["Explanation URL 1"] || "",
+                    row["Explanation URL 2"] || "",
+                  ],
+                };
+              } else if (type === "mcq") {
+                // MCQ Questions Mapping
+                return {
+                  questionId: row["Question ID"] || "",
+                  questionType: row["Question Type"] || "MCQ",
+                  language: row["Language"] || "",
+                  questionDescription: row["Question Description"] || "",
+                  options: [
+                    row["Option 1"] || "",
+                    row["Option 2"] || "",
+                    row["Option 3"] || "",
+                    row["Option 4"] || "",
+                  ],
+                  answer: row["Answer"] || "",
+                  marks: row["Marks"] || "",
+                  tags: row["Question Tags"] || "",
+                  difficulty: row["Difficulty"] || "",
+                  explanation: row["Explanation"] || "",
+                  explanationUrls: [
+                    row["Explanation URL 1"] || "",
+                    row["Explanation URL 2"] || "",
+                  ],
+                };
+              }
+            });
+      
+            // Update the respective state
             if (type === "coding") {
-              setCodingQuestions([...codingQuestions, ...json]);
+              setCodingQuestions([...codingQuestions, ...transformedData]);
             } else if (type === "mcq") {
-              setMcqQuestions([...mcqQuestions, ...json]);
+              setMcqQuestions([...mcqQuestions, ...transformedData]);
             }
           };
           reader.readAsBinaryString(file);
         }
       };
       
+      
+      
+      
     const submitQuestions = (e) => {
         e.preventDefault()
-        console.log(codingQuestions, mcqQuestions)
+        const questions ={coding:codingQuestions,mcq:mcqQuestions}
+        console.log(questions)
     }
     return (
         <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center px-4 font-sans">
@@ -93,6 +158,7 @@ const CreateExam = () => {
                 <h2 className="text-xl font-bold text-center text-[#363f8f] mb-4">
                     Manage Questions
                 </h2>
+                
 
                 {!selectedOption && (
                     <div className="text-center space-y-4">

@@ -66,11 +66,11 @@ const BatchScheduler = () => {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/schedule`, {
         params: { location },
       });
-      
       console.log(response)
       setScheduleData(response.data.schedule_data)
       setMentors(response.data.mentor_data || []);
     } catch (error) {
+      console.log(error)
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -122,7 +122,7 @@ const BatchScheduler = () => {
 
     const newBatch = {
 
-      batchno: batchno.toUpperCase(),
+      batchno: selectedBatches.map((batch) => batch.value),
       mentorName,
       startDate,
       endDate,
@@ -130,11 +130,11 @@ const BatchScheduler = () => {
       endTime: formatTo12Hour(endTime),
       roomNo: parseInt(roomNo, 10),
       techStack: selectedTechStack,
-      subject: selectedSubject,
+      subjects: selectedSubject,
       location,
-      batches: selectedBatches.map((batch) => batch.value), // Extract selected batch values
+      //batches: selectedBatches.map((batch) => batch.value), // Extract selected batch values
     };
-
+    console.log("data batch number",newBatch)
     try {
       await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/schedule`, newBatch);
       Swal.fire({
@@ -149,12 +149,13 @@ const BatchScheduler = () => {
       setStartTime("");
       setEndTime("");
       setStartDate("");
-    setEndDate("");
+      setEndDate("");
       setRoomNo("");
       setSelectedTechStack("");
       setSelectedSubject("");
       setSelectedBatches([]);
     } catch (error) {
+      console.log("from batch creation",error)
       Swal.fire({
         icon: "error",
         title: "Error",
